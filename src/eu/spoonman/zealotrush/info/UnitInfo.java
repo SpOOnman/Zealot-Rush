@@ -9,12 +9,16 @@ import eu.spoonman.zealotrush.UnitEnum;
 import eu.spoonman.zealotrush.UnitState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author spoonman
  */
 public abstract class UnitInfo {
+
+    private final static Pattern NAME_PATTERN = Pattern.compile(".*\\.([A-Za-z]+)Info");
 
     private UnitEnum unitEnum;
 
@@ -47,6 +51,13 @@ public abstract class UnitInfo {
         this.productionBlocks = null;
 
         this.suppliesGain = 0;
+    }
+
+    @Override
+    public String toString() {
+        Matcher matcher = NAME_PATTERN.matcher(this.getClass().getName());
+        matcher.matches();
+        return matcher.group(1);
     }
 
     public int getProductionTime() {

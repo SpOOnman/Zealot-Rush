@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Unit {
 
-    private final static Pattern NAME_PATTERN = Pattern.compile(".*\\.([A-Za-z]+)Info");
+    
 
     private Player player;
     private Unit producer;
@@ -81,10 +81,10 @@ public class Unit {
 
     @Override
     public String toString() {
-        Matcher matcher = NAME_PATTERN.matcher(this.getUnitInfo().getClass().getName());
-        matcher.matches();
-        return matcher.group(1);
+        return this.getUnitInfo().toString();
     }
+
+    
 
     public UnitInfo getUnitInfo() {
         return unitInfo;

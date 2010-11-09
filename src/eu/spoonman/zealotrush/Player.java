@@ -11,7 +11,10 @@ import eu.spoonman.zealotrush.info.PylonInfo;
 import eu.spoonman.zealotrush.info.UnitInfo;
 import eu.spoonman.zealotrush.info.ZealotInfo;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map.Entry;
 
 /**
  *
@@ -58,6 +61,21 @@ public class Player {
         this.buildOrders = new ArrayList<BuildOrder>();
     }
 
+    public void simulate(int time, List<Integer> orders) {
+        initialize();
+
+        ListIterator<Integer> iter = orders.listIterator();
+        Integer order = iter.next();
+        
+        for (int i = 0; i < time; i++) {
+            tick();
+            if (executeOrder(order)) {
+                if (iter.hasNext())
+                    order = iter.next();
+            }
+        }
+    }
+
     public void initialize() {
         this.possibleUnits.add(new NexusInfo());
         this.possibleUnits.add(new GatewayInfo());
@@ -84,16 +102,14 @@ public class Player {
 
     public boolean executeOrder(int i) {
         UnitInfo unitInfo = this.possibleUnits.get(i);
-        if (unitInfo.getClass().equals(PylonInfo.class)) {
-            i = i;
-        }
-
+        
         if (canProduce(unitInfo)) {
             produce(unitInfo, false);
             BuildOrder buildOrder = new BuildOrder(unitInfo, getMinerals(), getGas(), getSupplies(), getSeconds());
             this.buildOrders.add(buildOrder);
             return true;
         }
+        
         return false;
     }
 
@@ -168,6 +184,30 @@ public class Player {
     public void printLine(String message) {
         System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
             this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
+
+        printSummary();
+    }
+
+    public void printSummary() {
+        HashMap<UnitInfo, Integer> counts = new HashMap<UnitInfo, Integer>();
+        for(Unit unit : this.getUnits()) {
+            if (counts.get(unit.getUnitInfo()) == null) {
+                counts.put(unit.getUnitInfo(), 1);
+                continue;
+            }
+            counts.put(unit.getUnitInfo(), counts.get(unit.getUnitInfo()) + 1);
+        }
+
+        StringBuffer sb = new StringBuffer();
+        for(Entry<UnitInfo, Integer> entry : counts.entrySet()) {
+            sb.append(entry.getKey().toString());
+            sb.append(": ");
+            sb.append(entry.getValue());
+            sb.append(", ");
+        }
+
+        System.out.println(sb.toString());
+
     }
 
     public List<BuildOrder> getBuildOrders() {
