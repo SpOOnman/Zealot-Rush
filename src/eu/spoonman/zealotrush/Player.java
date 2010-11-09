@@ -30,7 +30,6 @@ public class Player {
     private int seconds;
     private List<UnitInfo> possibleUnits;
     private List<Unit> units;
-    private List<BuildOrder> buildOrders;
 
     private int targetTimeStamp;
 
@@ -61,7 +60,6 @@ public class Player {
 
         this.possibleUnits = new ArrayList<UnitInfo>();
         this.units = new ArrayList<Unit>();
-        this.buildOrders = new ArrayList<BuildOrder>();
     }
 
     public void simulate(int time, List<Integer> orders) {
@@ -115,8 +113,6 @@ public class Player {
         
         if (canProduce(unitInfo)) {
             produce(unitInfo, false);
-            BuildOrder buildOrder = new BuildOrder(unitInfo, getMinerals(), getGas(), getSupplies(), getSeconds());
-            this.buildOrders.add(buildOrder);
             return true;
         }
         
@@ -236,14 +232,6 @@ public class Player {
 
 //        System.out.println(sb.toString());
 
-    }
-
-    public List<BuildOrder> getBuildOrders() {
-        return buildOrders;
-    }
-
-    public void setBuildOrders(List<BuildOrder> buildOrders) {
-        this.buildOrders = buildOrders;
     }
 
     public int getGas() {
