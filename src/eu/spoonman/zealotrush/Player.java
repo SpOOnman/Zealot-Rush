@@ -37,7 +37,7 @@ public class Player {
     public static void main(String[] args) {
         Player player = new Player();
         player.initialize();
-        int[] orders = {2, 3, 3, 3, 2, 1, 4, 4, 4, 4, 4, 4, 4};
+        int[] orders = {0, 2, 0, 0, 2, 0, 1, 3, 4, 3, 2, 0, 0, 4, 0, 2, 2, 2, 4, 3, 2, 2, 3, 1, 1, 3, 4, 0, 4, 0};
         int currentOrder = 0;
 
         for (int i = 0; i < 600; i++) {
@@ -183,7 +183,7 @@ public class Player {
 
     public void eventUnitGatheredMinerals(Unit unit, int minerals) {
         this.setMinerals(this.getMinerals() + minerals);
-        //printLine(String.format("Unit %s gathered %d minerals.", unit, minerals));
+        printLine(String.format("Unit %s gathered %d minerals.", unit, minerals));
     }
 
     public void eventUnitChangedState(Unit unit, UnitState oldState, UnitState newState, int timeInState) {
@@ -192,10 +192,10 @@ public class Player {
     }
 
     public void printLine(String message) {
-//        System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
-//            this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
-//
-//        printSummary();
+        System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
+            this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
+
+        printSummary();
     }
 
     public int getUnitCount(Class clazz) {
