@@ -5,8 +5,6 @@
 
 package eu.spoonman.zealotrush.info;
 
-import eu.spoonman.zealotrush.UnitEnum;
-
 /**
  *
  * @author spoonman
@@ -14,7 +12,7 @@ import eu.spoonman.zealotrush.UnitEnum;
 public class PylonInfo extends UnitInfo {
 
     public PylonInfo() {
-        super(UnitEnum.PYLON, 100, 0, 25, 0);
+        super(100, 0, 25, 0);
         setSuppliesGain(8);
     }
 }

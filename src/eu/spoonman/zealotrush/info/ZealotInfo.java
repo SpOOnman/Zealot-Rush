@@ -4,8 +4,6 @@
  */
 package eu.spoonman.zealotrush.info;
 
-import eu.spoonman.zealotrush.UnitEnum;
-
 /**
  *
  * @author spoonman
@@ -13,7 +11,7 @@ import eu.spoonman.zealotrush.UnitEnum;
 public class ZealotInfo extends UnitInfo {
 
     public ZealotInfo() {
-        super(UnitEnum.ZEALOT, 100, 0, 38, 2);
+        super(100, 0, 38, 2);
         getRequirements().add(GatewayInfo.class);
         setProductionBlocks(GatewayInfo.class);
     }

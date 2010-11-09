@@ -5,8 +5,6 @@
 
 package eu.spoonman.zealotrush.info;
 
-import eu.spoonman.zealotrush.UnitEnum;
-
 /**
  *
  * @author spoonman
@@ -14,6 +12,6 @@ import eu.spoonman.zealotrush.UnitEnum;
 public class NexusInfo extends UnitInfo {
 
     public NexusInfo() {
-        super(UnitEnum.NEXUS, 400, 0, 100, 0);
+        super(400, 0, 100, 0);
     }
 }

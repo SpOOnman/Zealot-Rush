@@ -5,8 +5,6 @@
 
 package eu.spoonman.zealotrush.info;
 
-import eu.spoonman.zealotrush.UnitEnum;
-
 /**
  *
  * @author spoonman
@@ -14,7 +12,7 @@ import eu.spoonman.zealotrush.UnitEnum;
 public class GatewayInfo extends UnitInfo {
 
     public GatewayInfo() {
-        super(UnitEnum.GATEWAY, 150, 0, 60, 0);
+        super(150, 0, 60, 0);
 
     }
 

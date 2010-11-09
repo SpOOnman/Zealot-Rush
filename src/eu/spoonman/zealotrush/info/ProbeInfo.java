@@ -5,7 +5,6 @@
 
 package eu.spoonman.zealotrush.info;
 
-import eu.spoonman.zealotrush.UnitEnum;
 import eu.spoonman.zealotrush.UnitState;
 
 /**
@@ -15,7 +14,7 @@ import eu.spoonman.zealotrush.UnitState;
 public class ProbeInfo extends UnitInfo {
 
     public ProbeInfo() {
-        super(UnitEnum.PROBE, 50, 0, 15, 1);
+        super(50, 0, 15, 1);
         setProductionBlocks(NexusInfo.class);
         setMineralGain(8);
         setMineralGainTime(8);

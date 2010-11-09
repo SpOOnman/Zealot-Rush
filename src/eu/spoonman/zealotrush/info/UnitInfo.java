@@ -5,7 +5,6 @@
 
 package eu.spoonman.zealotrush.info;
 
-import eu.spoonman.zealotrush.UnitEnum;
 import eu.spoonman.zealotrush.UnitState;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,6 @@ import java.util.regex.Pattern;
 public abstract class UnitInfo {
 
     private final static Pattern NAME_PATTERN = Pattern.compile(".*\\.([A-Za-z]+)Info");
-
-    private UnitEnum unitEnum;
 
     private int mineralCost;
     private int gasCost;
@@ -38,8 +35,7 @@ public abstract class UnitInfo {
     private int gasGainTime;
     private int suppliesGain;
 
-    public UnitInfo(UnitEnum unitEnum, int mineralCost, int gasCost, int productionTime, int suppliesCost) {
-        this.unitEnum = unitEnum;
+    public UnitInfo(int mineralCost, int gasCost, int productionTime, int suppliesCost) {
         this.mineralCost = mineralCost;
         this.gasCost = gasCost;
         this.productionTime = productionTime;
