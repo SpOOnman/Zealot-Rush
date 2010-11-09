@@ -84,9 +84,9 @@ public class Player {
         this.possibleUnits.add(new ProbeInfo());
         this.possibleUnits.add(new ZealotInfo());
 
-        this.setMinerals(150);
-        this.setGas(0);
-        this.setSuppliesMax(8);
+        this.minerals = 150;
+        this.gas = 0;
+        this.suppliesMax = 8;
 
         produce(this.possibleUnits.get(0), true).productImmidiately();
         for (int i = 0; i < 6; i++) {
@@ -163,9 +163,9 @@ public class Player {
         this.units.add(unit);
 
         if (!noCost) {
-            this.setMinerals(this.getMinerals() - unitInfo.getMineralCost());
-            this.setGas(this.getGas() - unitInfo.getGasCost());
-            this.setSupplies(this.getSupplies() + unitInfo.getSuppliesCost());
+            this.minerals -= unitInfo.getMineralCost();
+            this.gas -= unitInfo.getGasCost();
+            this.supplies += unitInfo.getSuppliesCost();
             if (unitInfo.getProductionBlocks() != null) {
                 Unit producer = findFreeProducer(unitInfo);
                 // unit is already in production, but set its' producer
@@ -178,7 +178,7 @@ public class Player {
     }
 
     public void eventUnitGatheredMinerals(Unit unit, int minerals) {
-        this.setMinerals(this.getMinerals() + minerals);
+        this.minerals += minerals;
         printLine(String.format("Unit %s gathered %d minerals.", unit, minerals));
     }
 
@@ -230,32 +230,20 @@ public class Player {
             sb.append(", ");
         }
 
-//        System.out.println(sb.toString());
+        System.out.println(sb.toString());
 
     }
 
-    public int getGas() {
+    public int getGas() {{
         return gas;
-    }
-
-    public void setGas(int gas) {
-        this.gas = gas;
     }
 
     public int getMinerals() {
         return minerals;
     }
 
-    public void setMinerals(int minerals) {
-        this.minerals = minerals;
-    }
-
     public int getSeconds() {
         return seconds;
-    }
-
-    public void setSeconds(int seconds) {
-        this.seconds = seconds;
     }
 
     public int getFreeSupplies() {
@@ -266,31 +254,15 @@ public class Player {
         return supplies;
     }
 
-    public void setSupplies(int supplies) {
-        this.supplies = supplies;
-    }
-
     public int getSuppliesMax() {
         return suppliesMax;
-    }
-
-    public void setSuppliesMax(int suppliesMax) {
-        this.suppliesMax = suppliesMax;
     }
 
     public List<Unit> getUnits() {
         return units;
     }
 
-    public void setUnits(List<Unit> units) {
-        this.units = units;
-    }
-
     public int getTargetTimeStamp() {
         return targetTimeStamp;
-    }
-
-    public void setTargetTimeStamp(int targetTimeStamp) {
-        this.targetTimeStamp = targetTimeStamp;
     }
 }
