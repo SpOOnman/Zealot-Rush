@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package eu.spoonman.zealotrush;
 
 import eu.spoonman.zealotrush.info.GatewayInfo;
@@ -24,12 +23,26 @@ public class Player {
     private int gas;
     private int supplies;
     private int suppliesMax;
-
     private int seconds;
-
     private List<UnitInfo> possibleUnits;
     private List<Unit> units;
     private List<BuildOrder> buildOrders;
+
+    public static void main(String[] args) {
+        Player player = new Player();
+        player.initialize();
+        int[] orders = {2, 3, 3, 3, 2, 1, 4, 4};
+        int currentOrder = 0;
+
+        for (int i = 0; i < 600; i++) {
+            player.tick();
+            if (player.executeOrder(orders[currentOrder])) {
+                currentOrder++;
+                if (currentOrder == orders.length)
+                    currentOrder = 0;
+            }
+        }
+    }
 
     public Player() {
         this.minerals = 0;
@@ -54,24 +67,29 @@ public class Player {
         this.setMinerals(150);
         this.setGas(0);
         this.setSuppliesMax(8);
-        
-        produce(this.possibleUnits.get(0), true).productImmidiately();
-        for(int i = 0 ; i < 6 ; i++)
-            produce(this.possibleUnits.get(3), true).productImmidiately();
-    }
 
-    public void tick() {
-        for(Unit unit : this.units) {
-            unit.tick();
+        produce(this.possibleUnits.get(0), true).productImmidiately();
+        for (int i = 0; i < 6; i++) {
+            produce(this.possibleUnits.get(3), true).productImmidiately();
         }
     }
 
-    public void executeOrder(UnitInfo unitInfo) {
+    public void tick() {
+        for (Unit unit : this.units) {
+            unit.tick();
+        }
+        this.seconds += 1;
+    }
+
+    public boolean executeOrder(int i) {
+        UnitInfo unitInfo = this.possibleUnits.get(i);
         if (canProduce(unitInfo)) {
             produce(unitInfo, false);
             BuildOrder buildOrder = new BuildOrder(unitInfo, getMinerals(), getGas(), getSupplies(), getSeconds());
             this.buildOrders.add(buildOrder);
+            return true;
         }
+        return false;
     }
 
     public boolean canProduce(UnitInfo unitInfo) {
@@ -79,28 +97,40 @@ public class Player {
 
         result = result && getMinerals() >= unitInfo.getMineralCost();
         result = result && getGas() >= unitInfo.getGasCost();
-        result = result && getSupplies() >= unitInfo.getSuppliesCost();
-
-        for (Class clazz : unitInfo.getRequirements()) {
-            if (result == false)
-                break;
-            boolean found = findFreeRequirement(clazz) != null;
-            result = result && found;
-        }
+        result = result && getFreeSupplies() >= unitInfo.getSuppliesCost();
+        result = result && unitInfo.getProductionBlocks() != null && findFreeProducer(unitInfo) != null;
+        result = result && true;//findFreeRequirement(unitInfo) != null;
 
         return result;
     }
 
-    protected Unit findFreeRequirement(Class clazz) {
-        boolean found = false;
+    protected Unit findFreeProducer(UnitInfo unitInfo) {
         for (Unit unit : getUnits()) {
-            if (unit.getUnitInfo().getClass().equals(clazz) && unit.getUnitState() == UnitState.HOLD) {
+            if (unit.getUnitInfo().getClass().equals(unitInfo.getProductionBlocks()) && unit.getUnitState() == UnitState.HOLD) {
                 return unit;
             }
         }
+
         return null;
     }
 
+//    protected Unit findFreeRequirement(UnitInfo unitInfo) {
+//
+//        boolean result = false;
+//
+//        for (Class clazz : unitInfo.getRequirements()) {
+//            if (result == false)
+//                break;
+//            boolean found = false;
+//            for (Unit unit : getUnits()) {
+//                if (unit.getUnitInfo().getClass().equals(clazz) && unit.getUnitState() == UnitState.HOLD) {
+//                    found = true;
+//                }
+//            }
+//            result = result && found;
+//        }
+//        return result;
+//    }
     public Unit produce(UnitInfo unitInfo, boolean noCost) {
         Unit unit = new Unit(this, unitInfo);
         this.units.add(unit);
@@ -109,13 +139,27 @@ public class Player {
             this.setMinerals(this.getMinerals() - unitInfo.getMineralCost());
             this.setGas(this.getGas() - unitInfo.getGasCost());
             this.setSupplies(this.getSupplies() + unitInfo.getSuppliesCost());
-            Unit producer = findFreeRequirement(unitInfo.getClass());
+            Unit producer = findFreeProducer(unitInfo);
             // unit is already in production, but set its' producer
             producer.changeState(UnitState.IS_PRODUCTING);
             unit.setProducer(producer);
         }
-        
+
         return unit;
+    }
+
+    public void eventUnitGatheredMinerals(Unit unit, int minerals) {
+        this.setMinerals(this.getMinerals() + minerals);
+        //printLine(String.format("Unit %s gathered %d minerals.", unit, minerals));
+    }
+
+    public void eventUnitChangedState(Unit unit, UnitState oldState, UnitState newState, int timeInState) {
+        printLine(String.format("Unit %s state from %s to %s in %d secs.", unit, oldState, newState, timeInState));
+
+    }
+
+    public void printLine(String message) {
+        System.out.println(String.format("%d. %d m, %d g, %d/%d s, %s", this.getSeconds(), this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
     }
 
     public List<BuildOrder> getBuildOrders() {
@@ -150,6 +194,10 @@ public class Player {
         this.seconds = seconds;
     }
 
+    public int getFreeSupplies() {
+        return this.getSuppliesMax() - this.getSupplies();
+    }
+
     public int getSupplies() {
         return supplies;
     }
@@ -173,5 +221,4 @@ public class Player {
     public void setUnits(List<Unit> units) {
         this.units = units;
     }
-
 }

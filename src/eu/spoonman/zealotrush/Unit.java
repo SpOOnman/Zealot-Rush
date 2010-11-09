@@ -34,6 +34,7 @@ public class Unit {
     }
 
     public void changeState(UnitState unitState) {
+        this.getPlayer().eventUnitChangedState(this, this.getUnitState(), unitState, this.getTimeInState());
         this.unitState = unitState;
         this.timeInState = 0;
     }
@@ -58,7 +59,7 @@ public class Unit {
             return;
         
         if (this.timeInState % (this.unitInfo.getMineralGainTime() + 1) == 0) {
-            this.player.setMinerals(this.player.getMinerals() + this.unitInfo.getMineralGain());
+            this.player.eventUnitGatheredMinerals(this, this.unitInfo.getMineralGain());
         }
     }
 
@@ -66,11 +67,18 @@ public class Unit {
         // Did we finish production?
         if (this.timeInState == this.unitInfo.getProductionTime() - 1) {
             this.player.setSuppliesMax(this.player.getSuppliesMax() + this.unitInfo.getSuppliesGain());
+            changeState(this.unitInfo.getUnitStateAfterProduction());
+            this.producer.changeState(UnitState.HOLD);
         }
 
-        changeState(this.unitInfo.getUnitStateAfterProduction());
-        this.producer.changeState(UnitState.HOLD);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s", this.getUnitInfo().getClass());
+    }
+
+
 
     public UnitInfo getUnitInfo() {
         return unitInfo;
