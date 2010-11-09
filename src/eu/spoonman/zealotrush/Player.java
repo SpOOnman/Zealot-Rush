@@ -192,23 +192,31 @@ public class Player {
     }
 
     public void printLine(String message) {
-        System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
-            this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
-
-        printSummary();
+//        System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
+//            this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
+//
+//        printSummary();
     }
 
-    private Map<UnitInfo, Integer> getUnitCounts() {
-        HashMap<UnitInfo, Integer> counts = new HashMap<UnitInfo, Integer>();
+    public int getUnitCount(Class clazz) {
+        Map<Class, Integer> counts = getUnitCounts();
+        if (!(counts.containsKey(clazz)))
+            return 0;
+
+        return counts.get(clazz);
+    }
+
+    public Map<Class, Integer> getUnitCounts() {
+        HashMap<Class, Integer> counts = new HashMap<Class, Integer>();
         for(Unit unit : this.getUnits()) {
             if (unit.isInProduction())
                 continue;
             
             if (counts.get(unit.getUnitInfo()) == null) {
-                counts.put(unit.getUnitInfo(), 1);
+                counts.put(unit.getUnitInfo().getClass(), 1);
                 continue;
             }
-            counts.put(unit.getUnitInfo(), counts.get(unit.getUnitInfo()) + 1);
+            counts.put(unit.getUnitInfo().getClass(), counts.get(unit.getUnitInfo()) + 1);
         }
 
         return counts;
@@ -216,17 +224,17 @@ public class Player {
 
     public void printSummary() {
 
-        Map<UnitInfo, Integer> counts = getUnitCounts();
+        Map<Class, Integer> counts = getUnitCounts();
 
         StringBuffer sb = new StringBuffer();
-        for(Entry<UnitInfo, Integer> entry : counts.entrySet()) {
+        for(Entry<Class, Integer> entry : counts.entrySet()) {
             sb.append(entry.getKey().toString());
             sb.append(": ");
             sb.append(entry.getValue());
             sb.append(", ");
         }
 
-        System.out.println(sb.toString());
+//        System.out.println(sb.toString());
 
     }
 
