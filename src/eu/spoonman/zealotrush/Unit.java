@@ -82,6 +82,7 @@ public class Unit {
     @Override
     public String toString() {
         Matcher matcher = NAME_PATTERN.matcher(this.getUnitInfo().getClass().getName());
+        matcher.matches();
         return matcher.group(1);
     }
 
