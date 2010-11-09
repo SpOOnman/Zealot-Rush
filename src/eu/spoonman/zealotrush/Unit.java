@@ -6,12 +6,16 @@
 package eu.spoonman.zealotrush;
 
 import eu.spoonman.zealotrush.info.UnitInfo;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author spoonman
  */
 public class Unit {
+
+    private final static Pattern NAME_PATTERN = Pattern.compile(".*\\.([A-Za-z]+)Info");
 
     private Player player;
     private Unit producer;
@@ -68,17 +72,18 @@ public class Unit {
         if (this.timeInState == this.unitInfo.getProductionTime() - 1) {
             this.player.setSuppliesMax(this.player.getSuppliesMax() + this.unitInfo.getSuppliesGain());
             changeState(this.unitInfo.getUnitStateAfterProduction());
-            this.producer.changeState(UnitState.HOLD);
+
+            if (this.producer != null)
+                this.producer.changeState(UnitState.HOLD);
         }
 
     }
 
     @Override
     public String toString() {
-        return String.format("%s", this.getUnitInfo().getClass());
+        Matcher matcher = NAME_PATTERN.matcher(this.getUnitInfo().getClass().getName());
+        return matcher.group(1);
     }
-
-
 
     public UnitInfo getUnitInfo() {
         return unitInfo;

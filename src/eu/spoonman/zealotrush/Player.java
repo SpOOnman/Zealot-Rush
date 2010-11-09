@@ -38,8 +38,9 @@ public class Player {
             player.tick();
             if (player.executeOrder(orders[currentOrder])) {
                 currentOrder++;
-                if (currentOrder == orders.length)
+                if (currentOrder == orders.length) {
                     currentOrder = 0;
+                }
             }
         }
     }
@@ -83,6 +84,10 @@ public class Player {
 
     public boolean executeOrder(int i) {
         UnitInfo unitInfo = this.possibleUnits.get(i);
+        if (unitInfo.getClass().equals(PylonInfo.class)) {
+            i = i;
+        }
+
         if (canProduce(unitInfo)) {
             produce(unitInfo, false);
             BuildOrder buildOrder = new BuildOrder(unitInfo, getMinerals(), getGas(), getSupplies(), getSeconds());
@@ -98,7 +103,7 @@ public class Player {
         result = result && getMinerals() >= unitInfo.getMineralCost();
         result = result && getGas() >= unitInfo.getGasCost();
         result = result && getFreeSupplies() >= unitInfo.getSuppliesCost();
-        result = result && unitInfo.getProductionBlocks() != null && findFreeProducer(unitInfo) != null;
+        result = result && (unitInfo.getProductionBlocks() == null ? true : findFreeProducer(unitInfo) != null);
         result = result && true;//findFreeRequirement(unitInfo) != null;
 
         return result;
@@ -139,10 +144,12 @@ public class Player {
             this.setMinerals(this.getMinerals() - unitInfo.getMineralCost());
             this.setGas(this.getGas() - unitInfo.getGasCost());
             this.setSupplies(this.getSupplies() + unitInfo.getSuppliesCost());
-            Unit producer = findFreeProducer(unitInfo);
-            // unit is already in production, but set its' producer
-            producer.changeState(UnitState.IS_PRODUCTING);
-            unit.setProducer(producer);
+            if (unitInfo.getProductionBlocks() != null) {
+                Unit producer = findFreeProducer(unitInfo);
+                // unit is already in production, but set its' producer
+                producer.changeState(UnitState.IS_PRODUCTING);
+                unit.setProducer(producer);
+            }
         }
 
         return unit;
@@ -159,7 +166,8 @@ public class Player {
     }
 
     public void printLine(String message) {
-        System.out.println(String.format("%d. %d m, %d g, %d/%d s, %s", this.getSeconds(), this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
+        System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
+            this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
     }
 
     public List<BuildOrder> getBuildOrders() {
