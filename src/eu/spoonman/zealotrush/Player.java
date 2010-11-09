@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -31,10 +32,12 @@ public class Player {
     private List<Unit> units;
     private List<BuildOrder> buildOrders;
 
+    private int targetTimeStamp;
+
     public static void main(String[] args) {
         Player player = new Player();
         player.initialize();
-        int[] orders = {2, 3, 3, 3, 2, 1, 4, 4};
+        int[] orders = {2, 3, 3, 3, 2, 1, 4, 4, 4, 4, 4, 4, 4};
         int currentOrder = 0;
 
         for (int i = 0; i < 600; i++) {
@@ -97,6 +100,13 @@ public class Player {
         for (Unit unit : this.units) {
             unit.tick();
         }
+
+        Integer zealots = this.getUnitCounts().get(this.possibleUnits.get(4));
+        
+        if (zealots != null && zealots == 4)
+            this.targetTimeStamp = this.seconds;
+
+
         this.seconds += 1;
     }
 
@@ -188,15 +198,25 @@ public class Player {
         printSummary();
     }
 
-    public void printSummary() {
+    private Map<UnitInfo, Integer> getUnitCounts() {
         HashMap<UnitInfo, Integer> counts = new HashMap<UnitInfo, Integer>();
         for(Unit unit : this.getUnits()) {
+            if (unit.isInProduction())
+                continue;
+            
             if (counts.get(unit.getUnitInfo()) == null) {
                 counts.put(unit.getUnitInfo(), 1);
                 continue;
             }
             counts.put(unit.getUnitInfo(), counts.get(unit.getUnitInfo()) + 1);
         }
+
+        return counts;
+    }
+
+    public void printSummary() {
+
+        Map<UnitInfo, Integer> counts = getUnitCounts();
 
         StringBuffer sb = new StringBuffer();
         for(Entry<UnitInfo, Integer> entry : counts.entrySet()) {
@@ -268,5 +288,13 @@ public class Player {
 
     public void setUnits(List<Unit> units) {
         this.units = units;
+    }
+
+    public int getTargetTimeStamp() {
+        return targetTimeStamp;
+    }
+
+    public void setTargetTimeStamp(int targetTimeStamp) {
+        this.targetTimeStamp = targetTimeStamp;
     }
 }
