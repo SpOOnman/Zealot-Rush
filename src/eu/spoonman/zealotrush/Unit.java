@@ -15,8 +15,6 @@ import java.util.regex.Pattern;
  */
 public class Unit {
 
-    
-
     private Player player;
     private Unit producer;
     private UnitInfo unitInfo;
@@ -70,7 +68,7 @@ public class Unit {
     private void tickIsInProduction() {
         // Did we finish production?
         if (this.timeInState == this.unitInfo.getProductionTime() - 1) {
-            this.player.setSuppliesMax(this.player.getSuppliesMax() + this.unitInfo.getSuppliesGain());
+            this.player.eventUnitHasBeenProduced(this);
             changeState(this.unitInfo.getUnitStateAfterProduction());
 
             if (this.producer != null)

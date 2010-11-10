@@ -16,12 +16,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author spoonman
  */
 public class Player {
+    
+    private final static Logger log = Logger.getLogger(Player.class);
 
     private int minerals;
     private int gas;
@@ -32,22 +35,19 @@ public class Player {
     private List<Unit> units;
 
     private int targetTimeStamp;
+    private boolean logEvents;
 
     public static void main(String[] args) {
         Player player = new Player();
+        player.setLogEvents(true);
         player.initialize();
         int[] orders = {0, 2, 0, 0, 2, 0, 1, 3, 4, 3, 2, 0, 0, 4, 0, 2, 2, 2, 4, 3, 2, 2, 3, 1, 1, 3, 4, 0, 4, 0};
-        int currentOrder = 0;
 
-        for (int i = 0; i < 600; i++) {
-            player.tick();
-            if (player.executeOrder(orders[currentOrder])) {
-                currentOrder++;
-                if (currentOrder == orders.length) {
-                    currentOrder = 0;
-                }
-            }
-        }
+        List<Integer> o = new ArrayList<Integer>();
+        for(int x : orders)
+            o.add(x);
+
+        player.simulate(500, o);
     }
 
     public Player() {
@@ -60,6 +60,8 @@ public class Player {
 
         this.possibleUnits = new ArrayList<UnitInfo>();
         this.units = new ArrayList<Unit>();
+
+        this.logEvents = false;
     }
 
     public void simulate(int time, List<Integer> orders) {
@@ -182,14 +184,20 @@ public class Player {
         printLine(String.format("Unit %s gathered %d minerals.", unit, minerals));
     }
 
+    public void eventUnitHasBeenProduced(Unit unit) {
+        this.suppliesMax += unit.getUnitInfo().getSuppliesGain();
+        printLine(String.format("Unit %s has finished production.", unit));
+    }
+
     public void eventUnitChangedState(Unit unit, UnitState oldState, UnitState newState, int timeInState) {
         printLine(String.format("Unit %s state from %s to %s in %d secs.", unit, oldState, newState, timeInState));
-
     }
 
     public void printLine(String message) {
-        System.out.println(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
-            this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
+
+        if (this.logEvents)
+            log.info(String.format("%02d:%02d. %d m, %d g, %d/%d s, %s",
+                this.getSeconds() / 60, this.getSeconds() % 60, this.getMinerals(), this.getGas(), this.getSupplies(), this.getSuppliesMax(), message));
 
         printSummary();
     }
@@ -230,11 +238,11 @@ public class Player {
             sb.append(", ");
         }
 
-        System.out.println(sb.toString());
-
+        if (this.logEvents)
+            log.debug(sb.toString());
     }
 
-    public int getGas() {{
+    public int getGas() {
         return gas;
     }
 
@@ -264,5 +272,13 @@ public class Player {
 
     public int getTargetTimeStamp() {
         return targetTimeStamp;
+    }
+
+    public boolean isLogEvents() {
+        return logEvents;
+    }
+
+    public void setLogEvents(boolean logEvents) {
+        this.logEvents = logEvents;
     }
 }
