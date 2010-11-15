@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package eu.spoonman.zealotrush;
 
 import eu.spoonman.zealotrush.info.ZealotInfo;
@@ -19,22 +18,28 @@ import org.jgap.IChromosome;
  */
 public class ZealotRushFitnessFunction extends FitnessFunction {
 
-	@Override
-	protected double evaluate(IChromosome a_subject) {
-		int errors = 0;
+    private int targetZealots = 0;
 
-		Gene[] genes = a_subject.getGenes();
-                
-                List<Integer> orders = new ArrayList<Integer>();
-                for(Gene gene : genes) {
-                    orders.add((Integer) gene.getAllele());
-                    
-                }
-                Player player = new Player();
-                player.simulate(300, orders);
-                int zealots = player.getUnitCount(ZealotInfo.class);
+    public void setUpTargetZealots(int count) {
+        this.targetZealots = count;
+    }
 
-                return (5 - zealots) * player.getTargetTimeStamp();
-	}
+    @Override
+    protected double evaluate(IChromosome a_subject) {
+        Gene[] genes = a_subject.getGenes();
 
+        List<Integer> orders = new ArrayList<Integer>();
+        for (Gene gene : genes) {
+            orders.add((Integer) gene.getAllele());
+
+        }
+        Player player = new Player();
+        player.simulate(300, orders, targetZealots);
+
+        int zealots = player.getUnitCount(Player.ZEALOT);
+        //System.out.println("Dla playera czas " + player.getSeconds() + " zealotow " + zealots);
+        
+
+        return (targetZealots + 1  - zealots) * player.getSeconds();
+    }
 }

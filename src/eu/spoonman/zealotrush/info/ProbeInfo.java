@@ -13,11 +13,11 @@ import eu.spoonman.zealotrush.UnitState;
  */
 public class ProbeInfo extends UnitInfo {
 
-    public ProbeInfo() {
+    public ProbeInfo(NexusInfo nexusInfo) {
         super(50, 0, 15, 1);
-        setProductionBlocks(NexusInfo.class);
-        setMineralGain(8);
-        setMineralGainTime(8);
+        setProductionBlocks(nexusInfo);
+        setMineralGain(5);
+        setMineralGainTime(4);
         setUnitStateAfterProduction(UnitState.GETHERING);
     }
 

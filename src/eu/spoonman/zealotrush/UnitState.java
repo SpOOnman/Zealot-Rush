@@ -11,7 +11,7 @@ package eu.spoonman.zealotrush;
  */
 public enum UnitState {
 
-    IS_IN_PRODUCTION,
+    UNDER_CONSTRUCTION,
     IS_PRODUCTING,
     GETHERING,
     HOLD,

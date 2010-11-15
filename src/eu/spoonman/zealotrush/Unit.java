@@ -24,7 +24,6 @@ public class Unit {
     public Unit(Player player, UnitInfo unitInfo) {
         this.player = player;
         this.unitInfo = unitInfo;
-        changeState(UnitState.IS_IN_PRODUCTION);
     }
 
     public void productImmidiately() {
@@ -32,7 +31,7 @@ public class Unit {
     }
 
     public boolean isInProduction() {
-        return this.unitState == UnitState.IS_IN_PRODUCTION && this.timeInState < this.unitInfo.getProductionTime();
+        return this.unitState == UnitState.UNDER_CONSTRUCTION && this.timeInState < this.unitInfo.getProductionTime();
     }
 
     public void changeState(UnitState unitState) {
@@ -48,7 +47,7 @@ public class Unit {
             case GETHERING:
                 tickGathering();
                 break;
-            case IS_IN_PRODUCTION:
+            case UNDER_CONSTRUCTION:
                 tickIsInProduction();
                 break;
             default:

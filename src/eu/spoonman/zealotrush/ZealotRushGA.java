@@ -2,18 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package eu.spoonman.zealotrush;
 
-import nl.jamiecraane.gahelloworld.GaHelloWorld;
+import java.util.List;
 import org.jgap.Chromosome;
 import org.jgap.Configuration;
 import org.jgap.DeltaFitnessEvaluator;
 import org.jgap.Gene;
 import org.jgap.Genotype;
 import org.jgap.IChromosome;
+import org.jgap.impl.CrossoverOperator;
 import org.jgap.impl.DefaultConfiguration;
 import org.jgap.impl.IntegerGene;
+import org.jgap.impl.MutationOperator;
+import org.jgap.impl.SwappingMutationOperator;
 
 /**
  *
@@ -21,8 +23,9 @@ import org.jgap.impl.IntegerGene;
  */
 public class ZealotRushGA {
 
-    private static final int CHROME_SIZE = 30;
-    private static final int EVOLUTIONS = 3000;
+    private static final int POPULATION_SIZE = 100;
+    private static final int CHROME_SIZE = 15;
+    private static final int EVOLUTIONS = 1000;
 
     public ZealotRushGA() throws Exception {
         Genotype genotype = this.setupGenoType();
@@ -30,36 +33,25 @@ public class ZealotRushGA {
     }
 
     private void evolve(Genotype genotype) {
-        String solution = this.getSolution(genotype.getFittestChromosome());
-        System.out.println(solution);
-
         double previousFitness = Double.MAX_VALUE;
-        int numEvolutions = 0;
         for (int i = 0; i < EVOLUTIONS; i++) {
+            long start = System.nanoTime();
             genotype.evolve();
+            long end = System.nanoTime();
+            long microseconds = (end - start) / 1000;
             double fitness = genotype.getFittestChromosome().getFitnessValue();
+            if (false) {
+                List<IChromosome> chr = genotype.getPopulation().getChromosomes();
+                for (IChromosome c : chr) {
+                    System.out.println("C " + getSolution(c));
+                }
+
+            }
             if (fitness < previousFitness) {
                 previousFitness = fitness;
-                solution = this.getSolution(genotype.getFittestChromosome());
-                solution = this.getSolution(genotype.getFittestChromosome());
-                System.out.println(solution);
-            }
-
-//            if (solution.equals(TARGET)) {
-//                numEvolutions = i;
-//                break;
-//            }
-
-            try {
-                Thread.sleep(0);
-            } catch (InterruptedException e) {
+                System.out.println("Evo " + i + " solution " + this.getSolution(genotype.getFittestChromosome()) + " fit " + fitness + " took " + microseconds + "ms");
             }
         }
-
-        solution = this.getSolution(genotype.getFittestChromosome());
-        solution = this.getSolution(genotype.getFittestChromosome());
-        System.out.println(solution);
-        System.out.println("Needed [" + numEvolutions + "] evolutions for this");
     }
 
     private String getSolution(IChromosome a_subject) {
@@ -79,10 +71,30 @@ public class ZealotRushGA {
         gaConf.resetProperty(Configuration.PROPERTY_FITEVAL_INST);
         gaConf.setFitnessEvaluator(new DeltaFitnessEvaluator());
 
+        //gaConf.setPreservFittestIndividual(true);
+        //gaConf.setKeepPopulationSizeConstant(false);
         gaConf.setPreservFittestIndividual(true);
         gaConf.setKeepPopulationSizeConstant(false);
 
-        gaConf.setPopulationSize(50);
+        gaConf.setPopulationSize(POPULATION_SIZE);
+//        gaConf.getGeneticOperators().clear();
+//        CrossoverOperator co = new CrossoverOperator(gaConf, 30.0, true);
+//        MutationOperator  mo = new MutationOperator(gaConf, CHROME_SIZE/ 4);
+//        gaConf.getGeneticOperators().add(co);
+//        gaConf.getGeneticOperators().add(mo);
+//        List geneticOperators = gaConf.getGeneticOperators();
+//        for(Object o : geneticOperators)
+//            System.out.println(o);
+
+//        SwappingMutationOperator swapper = new SwappingMutationOperator(gaConf, 100);
+//        MutationOperator mo = new MutationOperator(gaConf, 100);
+//        CrossoverOperator co = new CrossoverOperator(gaConf, 100, true);
+        SwappingMutationOperator swapper = new SwappingMutationOperator(gaConf, CHROME_SIZE);
+        MutationOperator mo = new MutationOperator(gaConf, CHROME_SIZE * 1000);
+        CrossoverOperator co = new CrossoverOperator(gaConf, CHROME_SIZE);
+        gaConf.addGeneticOperator(co);
+        gaConf.addGeneticOperator(swapper);
+        gaConf.addGeneticOperator(mo);
 
         int chromeSize = CHROME_SIZE;
 
@@ -91,7 +103,9 @@ public class ZealotRushGA {
         IChromosome sampleChromosome = new Chromosome(gaConf, gene, chromeSize);
         gaConf.setSampleChromosome(sampleChromosome);
 
-        gaConf.setFitnessFunction(new ZealotRushFitnessFunction());
+        ZealotRushFitnessFunction fitnessFunction = new ZealotRushFitnessFunction();
+        fitnessFunction.setUpTargetZealots(4);
+        gaConf.setFitnessFunction(fitnessFunction);
 
         return Genotype.randomInitialGenotype(gaConf);
     }
@@ -100,4 +114,3 @@ public class ZealotRushGA {
         new ZealotRushGA();
     }
 }
-

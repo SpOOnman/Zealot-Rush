@@ -26,8 +26,8 @@ public abstract class UnitInfo {
 
     private UnitState unitStateAfterProduction;
 
-    private List<Class> requirements;
-    private Class productionBlocks;
+    private List<UnitInfo> requirements;
+    private UnitInfo productionBlocks;
 
     private int mineralGain;
     private int mineralGainTime;
@@ -43,7 +43,7 @@ public abstract class UnitInfo {
 
         this.unitStateAfterProduction = UnitState.HOLD;
 
-        this.requirements = new ArrayList<Class>();
+        this.requirements = new ArrayList<UnitInfo>();
         this.productionBlocks = null;
 
         this.suppliesGain = 0;
@@ -88,19 +88,19 @@ public abstract class UnitInfo {
         this.suppliesCost = suppliesCost;
     }
 
-    public List<Class> getRequirements() {
+    public List<UnitInfo> getRequirements() {
         return requirements;
     }
 
-    public void setRequirements(List<Class> requirements) {
+    public void setRequirements(List<UnitInfo> requirements) {
         this.requirements = requirements;
     }
 
-    public Class getProductionBlocks() {
+    public UnitInfo getProductionBlocks() {
         return productionBlocks;
     }
 
-    public void setProductionBlocks(Class blocks) {
+    public void setProductionBlocks(UnitInfo blocks) {
         this.productionBlocks = blocks;
     }
 
